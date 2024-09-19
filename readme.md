@@ -16,3 +16,7 @@ Important: You need Golang installed to run this app.
    `https://localhost:4000?url=<target url>`
 
 once the response is successfully loaded, it will be cached in-memory and retrieved from it in the second attempt to access the same url with the same method
+
+## Extras
+
+This Repo serves as a solution to [Roadmap.sh Caching Server Problem](https://roadmap.sh/projects/caching-server)
