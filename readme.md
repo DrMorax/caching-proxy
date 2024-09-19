@@ -11,7 +11,7 @@ Important: You need Golang installed to run this app.
 2. Copy the source code
    `git clone https://github.com/DrMorax/caching-proxy`
 3. Run the local server
-   `go run ./cmd/web`
+   `go run ./caching-proxy/cmd/web`
 4. In you browser, go to
    `https://localhost:4000?url=<target url>`
 
