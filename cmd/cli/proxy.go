@@ -14,12 +14,15 @@ func Proxy(w http.ResponseWriter, r *http.Request) {
 
 	object, found := getFromCache(key)
 	if found {
-		fmt.Printf("Request '%s' is cached\n", key)
-		responseWrite(w, r, object, "HIT")
+		w.Header().Set("X-Cache", "HIT")
+		fmt.Println("HIT\t", key)
+		responseWrite(w, object)
 		return
 	}
 
-	fmt.Println("Cache Not Present for key : ", key)
+	w.Header().Set("X-Cache", "MISS")
+
+	fmt.Println("MISS\t", key)
 	req, err := http.NewRequest(r.Method, query, nil)
 	if err != nil {
 		http.Error(w, "Failed to create request", http.StatusInternalServerError)
@@ -43,23 +46,18 @@ func Proxy(w http.ResponseWriter, r *http.Request) {
 
 	newObject := CacheObject{
 		Status:    resp.StatusCode,
-		Headers:   req.Header,
+		Headers:   resp.Header,
 		Response:  body,
 		Timestamp: time.Now(),
 	}
 	storeInCache(r.Method+":"+query, newObject)
 
-	responseWrite(w, r, newObject, "MISS")
-
-	for key, _ := range cache {
-		fmt.Println(key)
-	}
+	responseWrite(w, newObject)
 }
 
-func responseWrite(w http.ResponseWriter, r *http.Request, object CacheObject, result string) {
-	r.Header.Set("X-Cache", result)
+func responseWrite(w http.ResponseWriter, object CacheObject) {
 	for header, values := range object.Headers {
-		r.Header.Set(header, strings.Join(values, "; "))
+		w.Header().Set(header, strings.Join(values, "; "))
 	}
 	w.WriteHeader(object.Status)
 	w.Write(object.Response)
