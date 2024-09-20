@@ -57,7 +57,7 @@ func Proxy(w http.ResponseWriter, r *http.Request) {
 
 func responseWrite(w http.ResponseWriter, object CacheObject) {
 	for header, values := range object.Headers {
-		w.Header().Set(header, strings.Join(values, "; "))
+		w.Header().Set(header, strings.Join(values, ", "))
 	}
 	w.WriteHeader(object.Status)
 	w.Write(object.Response)
